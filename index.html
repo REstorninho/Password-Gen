@@ -136,7 +136,7 @@
   <h1>🔐 Gerador de Passwords</h1>
 
   <div class="output">
-    <input type="text" id="password" readonly value="">
+    <input type="text" id="password" value="">
     <button id="copyBtn" title="Copiar">📋</button>
   </div>
 
@@ -413,6 +413,12 @@
   });
 
   generateBtn.addEventListener('click', generatePassword);
+
+  passwordField.addEventListener('input', () => {
+    const password = passwordField.value;
+    updateStrength(password);
+    updateHashes(password);
+  });
 
   document.querySelectorAll('.copyHashBtn').forEach(btn => {
     btn.addEventListener('click', () => {
