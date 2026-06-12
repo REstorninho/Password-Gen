@@ -19,7 +19,8 @@
     background: #fff;
     border-radius: 12px;
     padding: 30px;
-    width: 480px;
+    width: 700px;
+    max-width: 95vw;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   }
   h1 {
@@ -99,25 +100,29 @@
     margin: 0 0 10px;
   }
   .hash-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
   .hash-row label {
-    width: 80px;
-    font-size: 0.85rem;
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
     color: #444;
-    flex-shrink: 0;
+    margin-bottom: 4px;
+  }
+  .hash-row .hash-field {
+    display: flex;
+    align-items: center;
   }
   .hash-row input {
     flex: 1;
     min-width: 0;
     padding: 6px 8px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-family: monospace;
     border: 1px solid #ccc;
     border-radius: 6px 0 0 6px;
     background: #f5f5f5;
+    white-space: nowrap;
     overflow-x: auto;
   }
   .hash-row button {
@@ -177,28 +182,38 @@
     <h2>Hashes da password</h2>
     <div class="hash-row">
       <label for="hashMD5">MD5</label>
-      <input type="text" id="hashMD5" readonly>
-      <button class="copyHashBtn" data-target="hashMD5" title="Copiar">📋</button>
+      <div class="hash-field">
+        <input type="text" id="hashMD5" readonly>
+        <button class="copyHashBtn" data-target="hashMD5" title="Copiar">📋</button>
+      </div>
     </div>
     <div class="hash-row">
       <label for="hashSHA1">SHA-1</label>
-      <input type="text" id="hashSHA1" readonly>
-      <button class="copyHashBtn" data-target="hashSHA1" title="Copiar">📋</button>
+      <div class="hash-field">
+        <input type="text" id="hashSHA1" readonly>
+        <button class="copyHashBtn" data-target="hashSHA1" title="Copiar">📋</button>
+      </div>
     </div>
     <div class="hash-row">
       <label for="hashSHA256">SHA-256</label>
-      <input type="text" id="hashSHA256" readonly>
-      <button class="copyHashBtn" data-target="hashSHA256" title="Copiar">📋</button>
+      <div class="hash-field">
+        <input type="text" id="hashSHA256" readonly>
+        <button class="copyHashBtn" data-target="hashSHA256" title="Copiar">📋</button>
+      </div>
     </div>
     <div class="hash-row">
       <label for="hashSHA384">SHA-384</label>
-      <input type="text" id="hashSHA384" readonly>
-      <button class="copyHashBtn" data-target="hashSHA384" title="Copiar">📋</button>
+      <div class="hash-field">
+        <input type="text" id="hashSHA384" readonly>
+        <button class="copyHashBtn" data-target="hashSHA384" title="Copiar">📋</button>
+      </div>
     </div>
     <div class="hash-row">
       <label for="hashSHA512">SHA-512</label>
-      <input type="text" id="hashSHA512" readonly>
-      <button class="copyHashBtn" data-target="hashSHA512" title="Copiar">📋</button>
+      <div class="hash-field">
+        <input type="text" id="hashSHA512" readonly>
+        <button class="copyHashBtn" data-target="hashSHA512" title="Copiar">📋</button>
+      </div>
     </div>
   </div>
 </div>
