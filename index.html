@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Passwords Seguras</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    width: 360px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-top: 0;
+    color: #333;
+  }
+  .output {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  #password {
+    flex: 1;
+    padding: 10px;
+    font-size: 1.1rem;
+    border: 2px solid #ccc;
+    border-radius: 6px 0 0 6px;
+    font-family: monospace;
+    background: #f5f5f5;
+  }
+  #copyBtn {
+    border: 2px solid #ccc;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    background: #eee;
+    cursor: pointer;
+    padding: 0 14px;
+    font-size: 1.1rem;
+  }
+  .option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+  }
+  label { color: #444; }
+  input[type="range"] { width: 60%; }
+  #generateBtn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 6px;
+    background: #6c63ff;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #generateBtn:hover { background: #574fd6; }
+  .strength {
+    margin-top: 12px;
+    height: 8px;
+    border-radius: 4px;
+    background: #eee;
+    overflow: hidden;
+  }
+  .strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s, background 0.3s;
+  }
+  .strength-label {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔐 Gerador de Passwords</h1>
+
+  <div class="output">
+    <input type="text" id="password" readonly value="">
+    <button id="copyBtn" title="Copiar">📋</button>
+  </div>
+
+  <div class="option">
+    <label for="length">Comprimento: <span id="lengthValue">16</span></label>
+    <input type="range" id="length" min="8" max="64" value="16">
+  </div>
+
+  <div class="option">
+    <label for="uppercase">Letras maiúsculas (A-Z)</label>
+    <input type="checkbox" id="uppercase" checked>
+  </div>
+  <div class="option">
+    <label for="lowercase">Letras minúsculas (a-z)</label>
+    <input type="checkbox" id="lowercase" checked>
+  </div>
+  <div class="option">
+    <label for="numbers">Números (0-9)</label>
+    <input type="checkbox" id="numbers" checked>
+  </div>
+  <div class="option">
+    <label for="symbols">Símbolos (!@#$...)</label>
+    <input type="checkbox" id="symbols" checked>
+  </div>
+  <div class="option">
+    <label for="excludeAmbiguous">Excluir ambíguos (l, 1, I, O, 0)</label>
+    <input type="checkbox" id="excludeAmbiguous">
+  </div>
+
+  <button id="generateBtn">Gerar Password</button>
+
+  <div class="strength">
+    <div class="strength-bar" id="strengthBar"></div>
+  </div>
+  <div class="strength-label" id="strengthLabel"></div>
+</div>
+
+<script>
+  const lengthInput = document.getElementById('length');
+  const lengthValue = document.getElementById('lengthValue');
+  const passwordField = document.getElementById('password');
+  const generateBtn = document.getElementById('generateBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const strengthBar = document.getElementById('strengthBar');
+  const strengthLabel = document.getElementById('strengthLabel');
+
+  const uppercaseEl = document.getElementById('uppercase');
+  const lowercaseEl = document.getElementById('lowercase');
+  const numbersEl = document.getElementById('numbers');
+  const symbolsEl = document.getElementById('symbols');
+  const excludeAmbiguousEl = document.getElementById('excludeAmbiguous');
+
+  const CHARS = {
+    uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lowercase: 'abcdefghijklmnopqrstuvwxyz',
+    numbers: '0123456789',
+    symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?'
+  };
+  const AMBIGUOUS = /[lI1O0]/g;
+
+  lengthInput.addEventListener('input', () => {
+    lengthValue.textContent = lengthInput.value;
+  });
+
+  function generatePassword() {
+    let pool = '';
+    const required = [];
+
+    if (uppercaseEl.checked) pool += CHARS.uppercase;
+    if (lowercaseEl.checked) pool += CHARS.lowercase;
+    if (numbersEl.checked) pool += CHARS.numbers;
+    if (symbolsEl.checked) pool += CHARS.symbols;
+
+    if (excludeAmbiguousEl.checked) {
+      pool = pool.replace(AMBIGUOUS, '');
+    }
+
+    if (!pool) {
+      alert('Seleciona pelo menos um tipo de carácter.');
+      return;
+    }
+
+    [uppercaseEl, lowercaseEl, numbersEl, symbolsEl].forEach(el => {
+      if (el.checked) {
+        let set = CHARS[el.id];
+        if (excludeAmbiguousEl.checked) set = set.replace(AMBIGUOUS, '');
+        if (set) required.push(set);
+      }
+    });
+
+    const length = parseInt(lengthInput.value, 10);
+    let result = [];
+
+    required.forEach(set => {
+      result.push(randomChar(set));
+    });
+
+    while (result.length < length) {
+      result.push(randomChar(pool));
+    }
+
+    result = shuffle(result).slice(0, length);
+    const password = result.join('');
+    passwordField.value = password;
+    updateStrength(password);
+  }
+
+  function randomChar(charset) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return charset[array[0] % charset.length];
+  }
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const rand = new Uint32Array(1);
+      crypto.getRandomValues(rand);
+      const j = rand[0] % (i + 1);
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function updateStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+    if (password.length >= 16) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    const percent = Math.min((score / 7) * 100, 100);
+    strengthBar.style.width = percent + '%';
+
+    let color, label;
+    if (score <= 2) { color = '#e74c3c'; label = 'Fraca'; }
+    else if (score <= 4) { color = '#f39c12'; label = 'Média'; }
+    else if (score <= 6) { color = '#2ecc71'; label = 'Forte'; }
+    else { color = '#27ae60'; label = 'Muito forte'; }
+
+    strengthBar.style.background = color;
+    strengthLabel.textContent = label;
+  }
+
+  copyBtn.addEventListener('click', () => {
+    if (!passwordField.value) return;
+    navigator.clipboard.writeText(passwordField.value).then(() => {
+      copyBtn.textContent = '✅';
+      setTimeout(() => copyBtn.textContent = '📋', 1000);
+    });
+  });
+
+  generateBtn.addEventListener('click', generatePassword);
+
+  generatePassword();
+</script>
+</body>
+</html>
